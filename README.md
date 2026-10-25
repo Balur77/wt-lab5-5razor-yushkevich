@@ -9,8 +9,10 @@ https://github.com/Balur77/wt-lab5-5razor-yushkevich
 
 ## Опубликованное приложение
 
-Публичный URL Render: **будет добавлен после выполнения deployment**
-(формат: `https://wt-lab5-5razor-yushkevich.onrender.com`).
+**https://wt-lab5-5razor-yushkevich.onrender.com**
+
+Сервис опубликован на Render как Web Service (Runtime: Docker, Branch: main).
+Сборка выполняется по `Dockerfile`, приложение слушает порт из переменной окружения `PORT`.
 
 ## Описание предметной области
 
