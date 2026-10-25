@@ -1,0 +1,11 @@
+﻿/* Стили, изолированные для _Layout.cshtml.
+   Основная тема приложения находится в wwwroot/css/site.css. */
+
+.brand-text {
+  white-space: nowrap;
+  word-break: normal;
+}
+
+.app-footer .footer-link {
+  white-space: nowrap;
+}
