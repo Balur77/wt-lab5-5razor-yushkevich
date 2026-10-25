@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>WT-5 — Razor Pages — Юшкевич Владислав</title>
+<style>
+    @page { size: A4; margin: 0; }
+
+    :root {
+        --navy: #0b2545;
+        --navy-2: #12345c;
+        --teal: #0f766e;
+        --teal-soft: #ccfbf1;
+        --amber: #f59e0b;
+        --ink: #1f2937;
+        --muted: #64748b;
+        --line: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: #dfe5ec;
+        color: var(--ink);
+        font-family: "Times New Roman", Times, serif;
+        font-size: 11.4pt;
+        line-height: 1.44;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .sheet {
+        position: relative;
+        width: 210mm;
+        height: 297mm;
+        padding: 15mm 17mm 17mm;
+        margin: 0 auto 8mm;
+        background: #fff;
+        overflow: hidden;
+        page-break-after: always;
+        box-shadow: 0 2mm 8mm rgba(15, 23, 42, .18);
+    }
+
+    .sheet:last-child { page-break-after: auto; }
+
+    @media print {
+        html, body { background: #fff; }
+        .sheet { margin: 0; box-shadow: none; }
+    }
+
+    .footer {
+        position: absolute;
+        left: 17mm;
+        right: 17mm;
+        bottom: 7mm;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 2.4mm;
+        border-top: .4pt solid var(--line);
+        color: #94a3b8;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8pt;
+    }
+
+    .footer b { color: var(--navy); font-weight: 600; }
+    .pnum { font-weight: 700; color: var(--navy); font-size: 9pt; }
+
+    .page-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2mm;
+    }
+
+    .kicker {
+        color: var(--teal);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8.2pt;
+        font-weight: 700;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+    }
+
+    .page-tag {
+        padding: 1mm 3mm;
+        border-radius: 10mm;
+        background: #f1f5f9;
+        color: #475569;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 7.8pt;
+        font-weight: 600;
+        letter-spacing: .04em;
+    }
+
+    h1 {
+        margin: 0 0 3.5mm;
+        color: var(--navy);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 20pt;
+        line-height: 1.14;
+        letter-spacing: -.35pt;
+    }
+
+    h2 {
+        margin: 5mm 0 2.5mm;
+        color: var(--navy);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 13.5pt;
+    }
+
+    h3 {
+        margin: 4.5mm 0 2mm;
+        color: var(--teal);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 11pt;
+        letter-spacing: -.1pt;
+    }
+
+    p { margin: 0 0 2.8mm; text-align: justify; }
+    ul, ol { margin: 1.5mm 0 3mm; padding-left: 6mm; }
+    li { margin-bottom: 1.5mm; }
+    strong { color: #111827; }
+
+    code, .mono {
+        font-family: Consolas, "Cascadia Code", monospace;
+        font-size: .92em;
+    }
+
+    p code, li code, td code {
+        background: #f1f5f9;
+        color: #0f4c5c;
+        border-radius: 1mm;
+        padding: 0 1mm;
+    }
+
+    a { color: var(--teal); text-decoration: none; }
+
+    .lead {
+        color: #334155;
+        font-size: 11.8pt;
+        line-height: 1.5;
+    }
+
+    .callout {
+        margin: 4mm 0;
+        padding: 3mm 4mm;
+        background: #f0fdfa;
+        border-left: 1.2mm solid var(--teal);
+        border-radius: 0 2mm 2mm 0;
+        color: #134e4a;
+        font-size: 10.3pt;
+    }
+
+    .callout.amber {
+        background: #fffbeb;
+        border-left-color: var(--amber);
+        color: #78350f;
+    }
+
+    .callout .label {
+        display: block;
+        margin-bottom: 1mm;
+        color: var(--teal);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 7.8pt;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+
+    .callout.amber .label { color: #b45309; }
+
+    table.meta {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 3mm 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 9.3pt;
+        line-height: 1.38;
+    }
+
+    table.meta th {
+        padding: 2.4mm 2.6mm;
+        background: var(--navy);
+        color: #fff;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    table.meta td {
+        padding: 2.1mm 2.6mm;
+        border-bottom: .4pt solid var(--line);
+        vertical-align: top;
+    }
+
+    table.meta tr:nth-child(even) td { background: #f8fafc; }
+    table.meta td:first-child { color: #475569; font-weight: 600; }
+
+    .figure {
+        margin: 2.5mm 0 0;
+        text-align: center;
+        break-inside: avoid;
+    }
+
+    .figure img {
+        display: block;
+        margin: 0 auto;
+        border: .5pt solid #cbd5e1;
+        border-radius: 2mm;
+        box-shadow: 0 1.6mm 4mm rgba(15, 23, 42, .12);
+    }
+
+    .figure.code-fig img {
+        border-color: #1e293b;
+        box-shadow: 0 2mm 5mm rgba(15, 23, 42, .22);
+    }
+
+    .figcaption {
+        margin-top: 1.8mm;
+        color: var(--muted);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8.2pt;
+        text-align: center;
+    }
+
+    .figcaption b { color: #334155; font-weight: 600; }
+
+    .two-up {
+        display: flex;
+        gap: 5mm;
+        align-items: flex-start;
+        justify-content: center;
+        margin-top: 3mm;
+    }
+
+    .two-up .figure { flex: 1; margin: 0; }
+    .two-up .figure img { width: 100%; }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4mm 5mm;
+    }
+
+    .stat {
+        padding: 3mm 3.5mm;
+        background: #f8fafc;
+        border: .5pt solid var(--line);
+        border-radius: 2mm;
+    }
+
+    .stat .n {
+        display: block;
+        color: var(--teal);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 17pt;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .stat .t {
+        color: var(--muted);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8.6pt;
+    }
+
+    .tree {
+        margin: 3mm 0;
+        padding: 4mm 5mm;
+        background: #0f172a;
+        border-radius: 2mm;
+        color: #e2e8f0;
+        font-family: Consolas, "Cascadia Code", monospace;
+        font-size: 8.35pt;
+        line-height: 1.4;
+        white-space: pre;
+        overflow: hidden;
+    }
+
+    .tree .c { color: #7dd3fc; }
+
+    .mini-code {
+        margin: 2mm 0 3mm;
+        padding: 2.8mm 3.5mm;
+        background: #0f172a;
+        border-radius: 1.6mm;
+        color: #e2e8f0;
+        font-family: Consolas, "Cascadia Code", monospace;
+        font-size: 8.8pt;
+        line-height: 1.5;
+        white-space: pre-wrap;
+    }
+
+    .mini-code .k { color: #fbbf24; }
+    .mini-code .s { color: #86efac; }
+
+    .pill-row { display: flex; flex-wrap: wrap; gap: 2mm; margin: 2.5mm 0 4mm; }
+
+    .pill {
+        padding: 1.2mm 3mm;
+        border-radius: 10mm;
+        background: var(--teal-soft);
+        color: #115e59;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8.4pt;
+        font-weight: 600;
+    }
+
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li { position: relative; padding-left: 6mm; }
+    .checklist li::before {
+        position: absolute;
+        left: 0;
+        top: -.2mm;
+        color: var(--teal);
+        content: "✓";
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-weight: 700;
+    }
+
+    /* ---------- обложка ---------- */
+    .cover {
+        padding: 0;
+        background:
+            radial-gradient(circle at 82% 12%, rgba(20, 184, 166, .30), transparent 40%),
+            radial-gradient(circle at 8% 82%, rgba(245, 158, 11, .16), transparent 42%),
+            linear-gradient(150deg, #06182b 0%, #0b2545 52%, #0d3b38 100%);
+        color: #fff;
+    }
+
+    .cover::before {
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+        background-size: 12mm 12mm;
+        content: "";
+    }
+
+    .cover::after {
+        position: absolute;
+        right: -55mm;
+        bottom: -60mm;
+        width: 150mm;
+        height: 150mm;
+        border: .6mm solid rgba(45, 212, 191, .22);
+        border-radius: 50%;
+        content: "";
+    }
+
+    .cover-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 20mm 19mm 15mm;
+    }
+
+    .cover-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 5mm;
+        border-bottom: .5pt solid rgba(255,255,255,.16);
+    }
+
+    .cover-brand {
+        display: flex;
+        align-items: center;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 14pt;
+        font-weight: 700;
+        letter-spacing: -.2pt;
+    }
+
+    .brand-name { margin-left: 3mm; color: #fff; }
+
+    .cover-mark {
+        display: grid;
+        place-items: center;
+        width: 11mm;
+        height: 11mm;
+        background: linear-gradient(145deg, #14b8a6, #0f766e);
+        border-radius: 3mm;
+        color: #fff;
+        font-size: 11pt;
+    }
+
+    .cover-brand .brand-name > span { color: var(--amber); }
+    .cover-top .wt {
+        color: #99f6e4;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8.5pt;
+        font-weight: 600;
+        letter-spacing: .16em;
+    }
+
+    .cover-kicker {
+        margin-top: 20mm;
+        color: #99f6e4;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8.6pt;
+        font-weight: 700;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+    }
+
+    .cover h1 {
+        margin: 4mm 0 5mm;
+        color: #fff;
+        font-size: 33pt;
+        line-height: 1.07;
+        letter-spacing: -1pt;
+        max-width: 165mm;
+    }
+
+    .cover h1 em {
+        color: var(--amber);
+        font-style: normal;
+    }
+
+    .cover-sub {
+        max-width: 148mm;
+        color: #cbd5e1;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 12.5pt;
+        line-height: 1.55;
+    }
+
+    .cover .pill-row { margin-top: 5mm; }
+
+    .cover .pill {
+        background: rgba(255,255,255,.10);
+        color: #e2e8f0;
+        border: .4pt solid rgba(255,255,255,.16);
+    }
+
+    .cover-spacer { flex: 1; }
+
+    .cover-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4mm 10mm;
+        padding: 5mm 0;
+        border-top: .5pt solid rgba(255,255,255,.16);
+        border-bottom: .5pt solid rgba(255,255,255,.16);
+        font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .cover-info .lbl {
+        display: block;
+        margin-bottom: .8mm;
+        color: #94a3b8;
+        font-size: 7.6pt;
+        font-weight: 600;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    .cover-info .val { color: #f8fafc; font-size: 9.6pt; line-height: 1.4; }
+    .cover-info a { color: #5eead4; }
+
+    .cover-sign {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-top: 7mm;
+        color: #94a3b8;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8.4pt;
+    }
+
+    .sign-line {
+        display: inline-block;
+        width: 52mm;
+        margin: 0 2mm;
+        border-bottom: .5pt solid #94a3b8;
+    }
+
+    .sign-name { color: #e2e8f0; }
+
+    .links-box {
+        margin-top: 3mm;
+        padding: 3mm 4mm;
+        background: rgba(15, 118, 110, .20);
+        border: .4pt solid rgba(94, 234, 212, .25);
+        border-radius: 2mm;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 8.8pt;
+        line-height: 1.6;
+    }
+
+    .links-box a { color: #99f6e4; }
+</style>
+</head>
+<body>
+
+<!-- 01. Обложка -->
+<section class="sheet cover">
+    <div class="cover-inner">
+        <div class="cover-top">
+            <div class="cover-brand">
+                <span class="cover-mark">◆</span>
+                <span class="brand-name">Cargo<span>Flow</span></span>
+            </div>
+            <span class="wt">ЛАБОРАТОРНАЯ РАБОТА · WT-5</span>
+        </div>
+
+        <div class="cover-kicker">Отчёт о выполнении работы</div>
+        <h1>Веб-приложение на ASP.NET Core <em>Razor Pages</em></h1>
+        <div class="cover-sub">
+            Учёт грузов на складе: каталог, поиск, добавление, просмотр,
+            редактирование и удаление. Публикация в Docker-контейнере на Render.
+        </div>
+
+        <div class="pill-row">
+            <span class="pill">ASP.NET Core 9</span>
+            <span class="pill">Razor Pages</span>
+            <span class="pill">Bootstrap 5</span>
+            <span class="pill">Docker</span>
+            <span class="pill">Render</span>
+        </div>
+
+        <div class="cover-spacer"></div>
+
+        <div class="cover-info">
+            <div>
+                <span class="lbl">Студент</span>
+                <span class="val">Юшкевич Владислав</span>
+            </div>
+            <div>
+                <span class="lbl">Дисциплина</span>
+                <span class="val">Веб-технологии · лабораторная WT-5</span>
+            </div>
+            <div>
+                <span class="lbl">Дата</span>
+                <span class="val">26 октября 2026 г.</span>
+            </div>
+            <div>
+                <span class="lbl">Тема</span>
+                <span class="val">ASP.NET Core Razor Pages, CRUD, Docker</span>
+            </div>
+            <div>
+                <span class="lbl">Репозиторий</span>
+                <span class="val"><a href="https://github.com/Balur77/wt-lab5-5razor-yushkevich">github.com/Balur77/wt-lab5-5razor-yushkevich</a></span>
+            </div>
+            <div>
+                <span class="lbl">Приложение</span>
+                <span class="val"><a href="https://wt-lab5-5razor-yushkevich.onrender.com">wt-lab5-5razor-yushkevich.onrender.com</a></span>
+            </div>
+        </div>
+
+        <div class="links-box">
+            Публичный URL: <a href="https://wt-lab5-5razor-yushkevich.onrender.com">https://wt-lab5-5razor-yushkevich.onrender.com</a><br />
+            Git-репозиторий: <a href="https://github.com/Balur77/wt-lab5-5razor-yushkevich">https://github.com/Balur77/wt-lab5-5razor-yushkevich</a>
+        </div>
+
+        <div class="cover-sign">
+            <div>Отчёт составлен по фактически выполненной работе</div>
+            <div>Подпись: <span class="sign-line"></span> <span class="sign-name">Юшкевич В.</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- 02. Цель и задачи -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Введение</span><span class="page-tag">02 / 27</span></div>
+    <h1>Цель работы и задачи</h1>
+
+    <p class="lead">
+        Цель работы — изучить модель программирования <strong>ASP.NET Core Razor Pages</strong>
+        и перевести учебное приложение учёта грузов с MVC на Razor Pages, а затем
+        подготовить его к публикации в контейнере.
+    </p>
+
+    <h3>Задачи</h3>
+    <ol>
+        <li>Разобрать структуру Razor Pages: страница <code>.cshtml</code> и её <code>PageModel</code>.</li>
+        <li>Реализовать обработчики <code>OnGet()</code> и <code>OnPost()</code>, привязку модели через <code>[BindProperty]</code>.</li>
+        <li>Реализовать полный CRUD: каталог, добавление, просмотр, редактирование и удаление груза.</li>
+        <li>Добавить поиск, фильтрацию, серверную и клиентскую валидацию, уведомления через <code>TempData</code>.</li>
+        <li>Оформить интерфейс на Bootstrap 5 с единым адаптивным layout.</li>
+        <li>Собрать Docker-образ, опубликовать приложение на Render, оформить Git-репозиторий и отчёт.</li>
+    </ol>
+
+    <h3>Кратко о результате</h3>
+    <table class="meta">
+        <tr><td style="width:34mm">Тема</td><td>CargoFlow — учёт грузов на складе</td></tr>
+        <tr><td>Стек</td><td>.NET 9, ASP.NET Core Razor Pages, Bootstrap 5, jQuery Validation</td></tr>
+        <tr><td>Модель</td><td><code>Cargo</code> + общее хранилище <code>CargoStore</code> в памяти</td></tr>
+        <tr><td>Страницы</td><td>Главная, каталог, добавление, подробности, редактирование, удаление</td></tr>
+        <tr><td>Контейнер</td><td>Docker, многоступенчатая сборка, порт из переменной <code>PORT</code></td></tr>
+        <tr><td>Публикация</td><td>Render Web Service (Runtime: Docker), статус <strong>Live</strong></td></tr>
+        <tr><td>Репозиторий</td><td><a href="https://github.com/Balur77/wt-lab5-5razor-yushkevich">github.com/Balur77/wt-lab5-5razor-yushkevich</a></td></tr>
+        <tr><td>Приложение</td><td><a href="https://wt-lab5-5razor-yushkevich.onrender.com">wt-lab5-5razor-yushkevich.onrender.com</a></td></tr>
+    </table>
+
+    <div class="callout">
+        <span class="label">Что проверено</span>
+        Приложение собрано локально, запущено в Docker-контейнере и опубликовано на Render.
+        Маршруты <code>/</code>, <code>/Cargo/Index</code>, <code>/Cargo/Create</code> и
+        <code>/Cargo/Details?id=1</code> отвечают кодом <strong>HTTP 200</strong>.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">02</span></div>
+</section>
+
+<!-- 03. Домен -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Предметная область</span><span class="page-tag">03 / 27</span></div>
+    <h1>Домен и функциональность</h1>
+
+    <p class="lead">
+        CargoFlow автоматизирует базовый учёт грузов на складе. Основная сущность —
+        <strong>Cargo</strong> (груз), перенесённая из лабораторной работы WT-4.
+        Для каждой позиции хранятся название, категория, количество, место хранения,
+        вес одной единицы, описание и признак доступности.
+    </p>
+
+    <p>
+        Общий вес партии и текстовый статус не дублируются в хранилище, а вычисляются
+        в модели. Данные находятся в едином статическом хранилище <code>CargoStore</code>,
+        поэтому добавленные записи видны на всех страницах до перезапуска приложения.
+    </p>
+
+    <h3>Реализованные страницы</h3>
+    <table class="meta">
+        <tr>
+            <th style="width:37mm">Страница</th>
+            <th style="width:40mm">Маршрут</th>
+            <th style="width:36mm">Обработчики</th>
+            <th>Назначение</th>
+        </tr>
+        <tr><td>Главная</td><td><code>/</code></td><td><code>OnGet()</code></td><td>Показатели склада и последние добавленные грузы</td></tr>
+        <tr><td>Каталог</td><td><code>/Cargo/Index</code></td><td><code>OnGet()</code></td><td>Карточки грузов, поиск и фильтр по категории</td></tr>
+        <tr><td>Добавление</td><td><code>/Cargo/Create</code></td><td><code>OnGet()</code>, <code>OnPost()</code></td><td>Форма создания, валидация, сохранение, <code>TempData</code></td></tr>
+        <tr><td>Подробности</td><td><code>/Cargo/Details?id=</code></td><td><code>OnGet(int id)</code></td><td>Полная карточка груза или <code>NotFound()</code></td></tr>
+        <tr><td>Редактирование</td><td><code>/Cargo/Edit?id=</code></td><td><code>OnGet(int id)</code>, <code>OnPost()</code></td><td>Изменение полей существующей записи</td></tr>
+        <tr><td>Удаление</td><td><code>/Cargo/Delete?id=</code></td><td><code>OnGet(int id)</code>, <code>OnPost(int id)</code></td><td>Подтверждение и удаление груза</td></tr>
+        <tr><td>Ошибка</td><td><code>/Error</code></td><td>—</td><td>Стандартная страница обработки ошибок</td></tr>
+    </table>
+
+    <div class="grid-2" style="margin-top:4mm">
+        <div class="stat"><span class="n">6</span><span class="t">демонстрационных грузов в стартовом наборе</span></div>
+        <div class="stat"><span class="n">5</span><span class="t">грузов доступно к отгрузке</span></div>
+        <div class="stat"><span class="n">1 297</span><span class="t">единиц груза в каталоге</span></div>
+        <div class="stat"><span class="n">1 547 кг</span><span class="t">суммарный вес всех партий</span></div>
+    </div>
+
+    <div class="callout amber">
+        <span class="label">Дополнительные операции</span>
+        Помимо обязательного добавления реализованы <strong>просмотр</strong>,
+        <strong>редактирование</strong> и <strong>удаление</strong> — это закрывает полный
+        CRUD-сценарий и дополнительные требования лабораторной работы.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">03</span></div>
+</section>
+
+<!-- 04. Структура -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Архитектура проекта</span><span class="page-tag">04 / 27</span></div>
+    <h1>Структура проекта</h1>
+
+    <p>
+        Проект организован по стандартным соглашениям ASP.NET Core: страницы находятся
+        в <code>Pages/</code>, общие фрагменты — в <code>Pages/Shared/</code>,
+        модель и хранилище вынесены в отдельные папки.
+    </p>
+
+    <div class="tree">wt-lab5-5razor-yushkevich/
+├── <span class="c">Models/</span>
+│   └── Cargo.cs                 <span class="c"># модель предметной области</span>
+├── <span class="c">Data/</span>
+│   └── CargoStore.cs            <span class="c"># единое хранилище в памяти</span>
+├── <span class="c">Pages/</span>
+│   ├── Index.cshtml(.cs)        <span class="c"># главная страница</span>
+│   ├── Cargo/
+│   │   ├── Index.cshtml(.cs)    <span class="c"># каталог, поиск, фильтр</span>
+│   │   ├── Create.cshtml(.cs)   <span class="c"># добавление + валидация</span>
+│   │   ├── Details.cshtml(.cs)  <span class="c"># подробная карточка</span>
+│   │   ├── Edit.cshtml(.cs)     <span class="c"># редактирование</span>
+│   │   └── Delete.cshtml(.cs)   <span class="c"># удаление</span>
+│   └── Shared/
+│       ├── _Layout.cshtml       <span class="c"># navbar, footer, SVG-спрайт</span>
+│       ├── _CargoCard.cshtml    <span class="c"># переиспользуемая карточка</span>
+│       └── _ValidationScriptsPartial.cshtml
+├── <span class="c">wwwroot/</span>
+│   ├── css/site.css             <span class="c"># тема и адаптивность</span>
+│   ├── js/site.js
+│   ├── images/warehouse-hero.svg
+│   └── lib/                     <span class="c"># Bootstrap, jQuery, валидация</span>
+├── Program.cs                   <span class="c"># культура, Razor Pages, PORT</span>
+├── Dockerfile
+├── .dockerignore
+├── README.md
+└── wt-lab5-5razor-yushkevich.csproj</div>
+
+    <h3>Ключевые файлы</h3>
+    <table class="meta">
+        <tr><th style="width:54mm">Файл</th><th>Роль в приложении</th></tr>
+        <tr><td><code>Program.cs</code></td><td>Настройка Razor Pages, культуры <code>ru-RU</code> с точкой в десятичных числах, чтение <code>PORT</code></td></tr>
+        <tr><td><code>Models/Cargo.cs</code></td><td>Модель с атрибутами валидации, вычисляемыми весом и статусом</td></tr>
+        <tr><td><code>Data/CargoStore.cs</code></td><td>Статический список грузов и выдача следующего <code>Id</code></td></tr>
+        <tr><td><code>Pages/Cargo/*.cshtml.cs</code></td><td>PageModel: обработчики <code>OnGet</code>/<code>OnPost</code>, состояние страницы</td></tr>
+        <tr><td><code>Pages/Cargo/*.cshtml</code></td><td>Razor-разметка, Tag Helpers, формы и вывод данных</td></tr>
+        <tr><td><code>Dockerfile</code></td><td>Многоступенчатая сборка и запуск приложения в контейнере</td></tr>
+    </table>
+
+    <div class="callout">
+        <span class="label">Соглашение Razor Pages</span>
+        Страница и её PageModel лежат рядом и называются одинаково:
+        <code>Index.cshtml</code> + <code>Index.cshtml.cs</code>. Класс наследуется от
+        <code>PageModel</code>, а обработчики называются <code>OnGet</code> и <code>OnPost</code>.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">04</span></div>
+</section>
+
+<!-- 05. Модель -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Модель данных</span><span class="page-tag">05 / 27</span></div>
+    <h1>Модель Cargo</h1>
+
+    <p>
+        Модель описывает груз и одновременно задаёт правила валидации через
+        DataAnnotations. Те же атрибуты <code>[Display]</code> используются Tag Helpers
+        для подписей полей формы.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/01-model.png" style="width:158mm" alt="Код модели Cargo" />
+        <div class="figcaption"><b>Рис. 1.</b> <code>Models/Cargo.cs</code> — модель, атрибуты валидации и вычисляемые свойства</div>
+    </div>
+
+    <h3>Что важно в модели</h3>
+    <ul class="checklist">
+        <li><code>[Required]</code>, <code>[StringLength]</code> и <code>[Range]</code> задают серверные правила и автоматически попадают в клиентскую валидацию.</li>
+        <li><code>[Display(Name = ...)]</code> даёт русские подписи полей без дублирования текста в разметке.</li>
+        <li><code>TotalWeight</code> и <code>Status</code> вычисляются на лету — в хранилище хранятся только исходные данные.</li>
+        <li>Модель не зависит от Razor Pages и может быть повторно использована в другом типе приложения.</li>
+    </ul>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">05</span></div>
+</section>
+
+<!-- 06. Хранилище -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Хранилище</span><span class="page-tag">06 / 27</span></div>
+    <h1>Единое хранилище CargoStore</h1>
+
+    <p>
+        В лабораторной работе не требуется база данных, поэтому используется статический
+        список в памяти. Он общий для всех PageModel: страница добавления записывает
+        объект, а каталог и главная сразу видят изменение.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/02-store.png" style="width:146mm" alt="Код CargoStore" />
+        <div class="figcaption"><b>Рис. 2.</b> <code>Data/CargoStore.cs</code> — стартовый набор грузов и общий список</div>
+    </div>
+
+    <h3>Как устроено хранилище</h3>
+    <ul class="checklist">
+        <li><code>static class CargoStore</code> содержит единственный <code>List&lt;Cargo&gt;</code> на всё приложение.</li>
+        <li>При старте добавляются 6 реалистичных грузов разных категорий — интерфейс не пустой.</li>
+        <li><code>GetNextId()</code> возвращает максимальный <code>Id + 1</code>, поэтому новые записи не конфликтуют.</li>
+        <li>После перезапуска приложения пользовательские записи исчезают — это осознанное ограничение учебного проекта.</li>
+    </ul>
+
+    <div class="callout amber">
+        <span class="label">Ограничение</span>
+        Хранилище не потокобезопасно и не сохраняется на диск. Для учебного сценария этого
+        достаточно; в production здесь была бы база данных и репозиторий с внедрением зависимостей.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">06</span></div>
+</section>
+
+<!-- 07. Index PageModel -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Razor Pages · каталог</span><span class="page-tag">07 / 27</span></div>
+    <h1>PageModel каталога и OnGet()</h1>
+
+    <p>
+        <code>IndexModel</code> хранит параметры поиска и результаты выборки. Значения
+        <code>Search</code> и <code>Category</code> связываются из query string, поэтому
+        фильтр сохраняется в адресе страницы и работает без JavaScript.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/03-index-model.png" style="width:158mm" alt="PageModel каталога" />
+        <div class="figcaption"><b>Рис. 3.</b> <code>Pages/Cargo/Index.cshtml.cs</code> — свойства страницы и обработчик <code>OnGet()</code></div>
+    </div>
+
+    <h3>Логика выборки</h3>
+    <ul class="checklist">
+        <li><code>Search</code> ищет подстроку без учёта регистра в названии, месте хранения и описании.</li>
+        <li><code>Category</code> фильтрует по точному совпадению категории.</li>
+        <li>Результат сортируется по <code>Id</code>, а <code>Categories</code> формирует список для выпадающего меню.</li>
+        <li><code>TotalCount</code> и <code>HasFilters</code> используются в разметке для счётчика и бейджа активного фильтра.</li>
+    </ul>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">07</span></div>
+</section>
+
+<!-- 08. Index Razor -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Razor-разметка · каталог</span><span class="page-tag">08 / 27</span></div>
+    <h1>Razor Page каталога</h1>
+
+    <p>
+        Разметка получает данные из PageModel через <code>@Model</code>. Цикл
+        <code>@foreach</code> выводит карточки, а <code>&lt;partial&gt;</code> подключает
+        общий фрагмент <code>_CargoCard.cshtml</code> — разметка карточки не дублируется.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/04-index-view.png" style="width:166mm" alt="Razor-разметка каталога" />
+        <div class="figcaption"><b>Рис. 4.</b> <code>Pages/Cargo/Index.cshtml</code> — счётчик, цикл по грузам и partial-карточка</div>
+    </div>
+
+    <h3>Использованные возможности Razor</h3>
+    <ul class="checklist">
+        <li><code>@foreach</code> и <code>@if</code> — управляющие конструкции прямо в разметке.</li>
+        <li><code>&lt;partial name="_CargoCard" model="cargo" /&gt;</code> — переиспользуемый компонент представления.</li>
+        <li><code>asp-page</code> и <code>asp-route-*</code> — генерация ссылок по именам страниц, а не по «сырым» URL.</li>
+        <li>Bootstrap-классы <code>row g-4</code>, <code>col-12 col-md-6 col-lg-4</code> дают адаптивную сетку.</li>
+    </ul>
+
+    <p>
+        При пустом результате показывается отдельное состояние с предложением сбросить
+        фильтры — страница не выглядит «сломанной».
+    </p>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">08</span></div>
+</section>
+
+<!-- 09. Create PageModel -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Razor Pages · добавление</span><span class="page-tag">09 / 27</span></div>
+    <h1>CreateModel: [BindProperty] и OnPost()</h1>
+
+    <p>
+        Форма добавления — центральный сценарий работы. Свойство <code>Cargo</code>
+        помечено <code>[BindProperty]</code>, поэтому ASP.NET Core автоматически связывает
+        поля POST-запроса с моделью до вызова <code>OnPost()</code>.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/05-create-model.png" style="width:158mm" alt="CreateModel" />
+        <div class="figcaption"><b>Рис. 5.</b> <code>Pages/Cargo/Create.cshtml.cs</code> — привязка модели и обработчик POST</div>
+    </div>
+
+    <h3>Ключевые решения</h3>
+    <ul class="checklist">
+        <li><code>ModelState.IsValid</code> — единая точка проверки серверной валидации; при ошибке возвращается та же страница.</li>
+        <li><code>Id</code> выдаётся хранилищем, а строковые поля очищаются от пробелов через <code>Trim()</code>.</li>
+        <li><code>TempData["SuccessMessage"]</code> переживает редирект и показывает одноразовое уведомление.</li>
+        <li><code>RedirectToPage("./Index")</code> реализует паттерн Post/Redirect/Get — форма не отправляется повторно при обновлении.</li>
+    </ul>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">09</span></div>
+</section>
+
+<!-- 10. Create form -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Razor-разметка · форма</span><span class="page-tag">10 / 27</span></div>
+    <h1>Форма добавления груза</h1>
+
+    <p>
+        Форма собрана на Tag Helpers: они генерируют корректные <code>name</code>/<code>id</code>,
+        подставляют значения, подписи и атрибуты клиентской валидации. Отдельный
+        partial подключает jQuery Validation.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/06-create-form.png" style="width:168mm" alt="Форма добавления" />
+        <div class="figcaption"><b>Рис. 6.</b> <code>Pages/Cargo/Create.cshtml</code> — поля формы, <code>asp-for</code> и вывод ошибок</div>
+    </div>
+
+    <h3>Tag Helpers в форме</h3>
+    <ul class="checklist">
+        <li><code>asp-for="Cargo.Name"</code> связывает input со свойством и добавляет <code>data-val-*</code> атрибуты.</li>
+        <li><code>asp-validation-for</code> выводит сообщение конкретного поля, <code>asp-validation-summary="ModelOnly"</code> — общие ошибки.</li>
+        <li><code>asp-items="Model.Categories"</code> заполняет выпадающий список категорий.</li>
+        <li><code>&lt;partial name="_ValidationScriptsPartial" /&gt;</code> включает клиентскую проверку до отправки формы.</li>
+    </ul>
+
+    <div class="callout">
+        <span class="label">Доступность</span>
+        У полей есть <code>label</code>, подсказки <code>placeholder</code>, обязательные поля
+        отмечены звёздочкой, а кнопки имеют понятные тексты — форма удобна и с клавиатуры.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">10</span></div>
+</section>
+
+<!-- 11. Валидация -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Валидация</span><span class="page-tag">11 / 27</span></div>
+    <h1>Серверная и клиентская валидация</h1>
+
+    <p>
+        Один набор атрибутов модели работает с двух сторон: jQuery Validation проверяет
+        форму в браузере, а <code>ModelState.IsValid</code> повторно проверяет данные на
+        сервере. Сообщения локализованы на русский язык.
+    </p>
+
+    <div class="figure">
+        <img src="report/assets/validation.jpg" style="width:142mm" alt="Ошибки валидации формы" />
+        <div class="figcaption"><b>Рис. 7.</b> Отправка пустой формы: клиентские сообщения об ошибках на русском языке</div>
+    </div>
+
+    <h3>Правила модели</h3>
+    <table class="meta">
+        <tr><th style="width:44mm">Поле</th><th>Ограничение</th></tr>
+        <tr><td>Название</td><td>обязательно, не более 100 символов</td></tr>
+        <tr><td>Категория</td><td>обязательно, не более 60 символов</td></tr>
+        <tr><td>Количество</td><td>целое число от 1 до 1 000 000</td></tr>
+        <tr><td>Место хранения</td><td>обязательно, не более 100 символов</td></tr>
+        <tr><td>Вес единицы</td><td>от 0,01 до 1 000 000 000 кг</td></tr>
+        <tr><td>Описание</td><td>обязательно, не более 300 символов</td></tr>
+    </table>
+
+    <div class="callout">
+        <span class="label">Культура и числа</span>
+        В <code>Program.cs</code> включена культура <code>ru-RU</code>, но десятичный
+        разделитель принудительно оставлен точкой — иначе HTML <code>input type="number"</code>
+        с дробным весом не связывался бы с моделью.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">11</span></div>
+</section>
+
+<!-- 12. Details / Delete -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Дополнительные операции</span><span class="page-tag">12 / 27</span></div>
+    <h1>Просмотр и удаление</h1>
+
+    <p>
+        Страница подробностей принимает <code>id</code> из query string и возвращает
+        <code>NotFound()</code>, если запись не найдена. Удаление сделано в два шага:
+        <code>OnGet</code> показывает подтверждение, <code>OnPost</code> удаляет запись.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/07-details-delete.png" style="width:160mm" alt="Details и Delete" />
+        <div class="figcaption"><b>Рис. 8.</b> Обработчики <code>Details.OnGet(int id)</code> и <code>Delete.OnPost(int id)</code></div>
+    </div>
+
+    <h3>Почему удаление через POST</h3>
+    <ul class="checklist">
+        <li>GET-запрос не должен изменять состояние — иначе удаление сработает по простой ссылке или предзагрузке.</li>
+        <li>Страница подтверждения показывает название груза, чтобы пользователь не удалил запись случайно.</li>
+        <li>После удаления выполняется <code>RedirectToPage("./Index")</code> и показывается сообщение через <code>TempData</code>.</li>
+        <li>Для отсутствующего <code>id</code> возвращается <code>NotFound()</code>, а не пустая страница.</li>
+    </ul>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">12</span></div>
+</section>
+
+<!-- 13. Edit -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Дополнительные операции</span><span class="page-tag">13 / 27</span></div>
+    <h1>Редактирование груза</h1>
+
+    <p>
+        <code>EditModel</code> загружает запись по <code>id</code> в <code>OnGet</code>,
+        а в <code>OnPost</code> проверяет модель и переносит изменённые поля в существующий
+        объект хранилища. После сохранения — редирект в каталог с уведомлением.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/08-edit.png" style="width:148mm" alt="EditModel" />
+        <div class="figcaption"><b>Рис. 9.</b> <code>Pages/Cargo/Edit.cshtml.cs</code> — сохранение изменений</div>
+    </div>
+
+    <div class="figure">
+        <img src="report/assets/app-edit.jpg" style="width:120mm" alt="Страница редактирования" />
+        <div class="figcaption"><b>Рис. 10.</b> Страница редактирования: форма предзаполнена данными груза</div>
+    </div>
+
+    <div class="callout">
+        <span class="label">Единый сценарий</span>
+        Форма редактирования использует ту же модель и те же правила валидации, что и
+        добавление. Отличается только обработчик: он обновляет существующую запись,
+        а не создаёт новую.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">13</span></div>
+</section>
+
+<!-- 14. Главная -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Интерфейс</span><span class="page-tag">14 / 27</span></div>
+    <h1>Главная страница</h1>
+
+    <p>
+        Главная показывает состояние склада: количество позиций, доступные грузы,
+        суммарное количество единиц и общий вес. Ниже — возможности приложения и три
+        последних добавленных груза.
+    </p>
+
+    <div class="figure">
+        <img src="report/assets/app-home.jpg" style="width:148mm" alt="Главная страница" />
+        <div class="figcaption"><b>Рис. 11.</b> Главная страница CargoFlow с показателями склада</div>
+    </div>
+
+    <div class="callout">
+        <span class="label">Оформление</span>
+        Тёмно-зелёный hero-блок, жёлтый акцент, SVG-иллюстрация склада и карточки
+        Bootstrap создают цельный визуальный стиль. Все иконки — инлайновый SVG-спрайт,
+        без внешних зависимостей.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">14</span></div>
+</section>
+
+<!-- 15. Каталог и добавление -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Интерфейс</span><span class="page-tag">15 / 27</span></div>
+    <h1>Каталог и форма добавления</h1>
+
+    <p>
+        Каталог выводит грузы адаптивными карточками: на широком экране — три колонки,
+        на планшете — две, на телефоне — одна. Над списком расположены поиск и фильтр
+        по категории.
+    </p>
+
+    <div class="two-up">
+        <div class="figure">
+            <img src="report/assets/app-catalog.jpg" alt="Каталог грузов" />
+            <div class="figcaption"><b>Рис. 12.</b> Каталог с поиском и фильтром</div>
+        </div>
+        <div class="figure">
+            <img src="report/assets/app-create.jpg" alt="Форма добавления" />
+            <div class="figcaption"><b>Рис. 13.</b> Форма добавления груза</div>
+        </div>
+    </div>
+
+    <h3>Что видно в интерфейсе</h3>
+    <ul class="checklist">
+        <li>Поиск по названию, месту хранения и описанию, а также фильтр по категории.</li>
+        <li>Карточка содержит статус, категорию, количество, общий вес и место хранения.</li>
+        <li>Кнопки «Подробнее» и «Редактировать» ведут на соответствующие Razor Pages.</li>
+        <li>Счётчик «Найдено N из M» и бейдж активного фильтра помогают ориентироваться в выборке.</li>
+    </ul>
+
+    <div class="callout" style="margin-top:5mm">
+        <span class="label">Поиск через query string</span>
+        Параметры формы попадают в адрес страницы:
+        <code>/Cargo/Index?Search=ноутбук&amp;Category=Электроника</code>. Ссылкой на такую
+        выборку можно поделиться, а обновление страницы не сбрасывает фильтр — JavaScript
+        для поиска не требуется.
+    </div>
+
+    <table class="meta">
+        <tr><th style="width:38mm">Параметр</th><th>Поведение</th></tr>
+        <tr><td><code>Search</code></td><td>Поиск без учёта регистра по названию, месту хранения и описанию</td></tr>
+        <tr><td><code>Category</code></td><td>Точное совпадение категории; пустое значение означает «Все категории»</td></tr>
+        <tr><td>Сброс</td><td>Ссылка на <code>/Cargo/Index</code> без параметров очищает выборку</td></tr>
+    </table>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">15</span></div>
+</section>
+
+<!-- 16. Details / Delete screens -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Интерфейс</span><span class="page-tag">16 / 27</span></div>
+    <h1>Подробности и удаление</h1>
+
+    <p>
+        Карточка подробностей показывает все поля груза, включая вычисленные общий вес и
+        статус. Удаление требует явного подтверждения и показывает, какая именно запись
+        будет удалена.
+    </p>
+
+    <div class="two-up">
+        <div class="figure">
+            <img src="report/assets/app-details.jpg" alt="Страница подробностей" />
+            <div class="figcaption"><b>Рис. 14.</b> Подробная карточка груза</div>
+        </div>
+        <div class="figure">
+            <img src="report/assets/app-delete.jpg" alt="Страница удаления" />
+            <div class="figcaption"><b>Рис. 15.</b> Подтверждение удаления</div>
+        </div>
+    </div>
+
+    <h3>Сценарии</h3>
+    <ul class="checklist">
+        <li>«Подробнее» открывает <code>/Cargo/Details?id=…</code> и показывает полную информацию о грузе.</li>
+        <li>«Редактировать» открывает форму с уже заполненными полями.</li>
+        <li>«Удалить» открывает страницу подтверждения; фактическое удаление выполняется POST-запросом.</li>
+        <li>После редактирования или удаления пользователь возвращается в каталог и видит уведомление.</li>
+    </ul>
+
+    <h3>Форма подтверждения</h3>
+    <div class="mini-code">&lt;form method=<span class="s">"post"</span>&gt;
+    &lt;input type=<span class="s">"hidden"</span> asp-for=<span class="s">"Cargo.Id"</span> /&gt;
+    &lt;button type=<span class="s">"submit"</span> class=<span class="s">"btn btn-danger"</span>&gt;Удалить&lt;/button&gt;
+    &lt;a asp-page=<span class="s">"./Index"</span> class=<span class="s">"btn btn-outline-secondary"</span>&gt;Отмена&lt;/a&gt;
+&lt;/form&gt;</div>
+
+    <div class="callout">
+        <span class="label">Защита от случайного удаления</span>
+        Кнопка удаления находится только на странице подтверждения, а сам обработчик
+        <code>OnPost(int id)</code> повторно проверяет существование записи и возвращает
+        <code>NotFound()</code> для неизвестного идентификатора.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">16</span></div>
+</section>
+
+<!-- 17. Результат добавления -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Результат операции</span><span class="page-tag">17 / 27</span></div>
+    <h1>Результат добавления</h1>
+
+    <p>
+        После успешного POST-запроса выполняется редирект в каталог. Сообщение хранится
+        в <code>TempData</code>, поэтому отображается один раз и не «залипает» при
+        обновлении страницы.
+    </p>
+
+    <div class="figure">
+        <img src="report/assets/app-success.jpg" style="width:136mm" alt="Успешное добавление груза" />
+        <div class="figcaption"><b>Рис. 16.</b> Каталог после добавления: зелёное уведомление и новая запись</div>
+    </div>
+
+    <div class="mini-code"><span class="k">TempData</span>[<span class="s">"SuccessMessage"</span>] =
+    <span class="s">$"Груз «{Cargo.Name}» добавлен в каталог (ID: {Cargo.Id})."</span>;
+
+<span class="k">return</span> RedirectToPage(<span class="s">"./Index"</span>);</div>
+
+    <div class="callout">
+        <span class="label">Post/Redirect/Get</span>
+        Пользователь не остаётся на URL обработчика POST: обновление страницы не создаёт
+        дубликат груза, а сообщение об успехе показывается ровно один раз.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">17</span></div>
+</section>
+
+<!-- 18. Мобильная версия -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Адаптивность</span><span class="page-tag">18 / 27</span></div>
+    <h1>Мобильная версия</h1>
+
+    <p>
+        Интерфейс проверен в эмуляции экрана шириной 390 px. Сетка Bootstrap
+        перестраивается в одну колонку, навигация сворачивается в «бургер», а карточки
+        и формы остаются читаемыми.
+    </p>
+
+    <div class="two-up" style="gap:8mm">
+        <div class="figure" style="flex:0 0 58mm">
+            <img src="report/assets/mobile-home-sm.jpg" alt="Мобильная главная" />
+            <div class="figcaption"><b>Рис. 17.</b> Главная на телефоне</div>
+        </div>
+        <div class="figure" style="flex:0 0 58mm">
+            <img src="report/assets/mobile-catalog-sm.jpg" alt="Мобильный каталог" />
+            <div class="figcaption"><b>Рис. 18.</b> Каталог на телефоне</div>
+        </div>
+    </div>
+
+    <div class="callout">
+        <span class="label">Bootstrap-сетка</span>
+        Классы <code>col-12 col-md-6 col-lg-4</code> задают одну, две и три колонки
+        соответственно. Навигация использует <code>navbar-expand-lg</code> и
+        <code>collapse</code>, поэтому на узком экране меню не занимает всю шапку.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">18</span></div>
+</section>
+
+<!-- 19. Layout -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Общий layout</span><span class="page-tag">19 / 27</span></div>
+    <h1>Единый layout и Bootstrap 5</h1>
+
+    <p>
+        <code>_Layout.cshtml</code> задаёт общую шапку, навигацию, контейнер контента и
+        подвал. Все страницы подключаются через <code>_ViewStart.cshtml</code> и получают
+        одинаковое оформление.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/09-layout.png" style="width:158mm" alt="Layout" />
+        <div class="figcaption"><b>Рис. 19.</b> <code>Pages/Shared/_Layout.cshtml</code> — Bootstrap Navbar и активный пункт меню</div>
+    </div>
+
+    <h3>Компоненты интерфейса</h3>
+    <ul class="checklist">
+        <li><code>sticky-top</code> удерживает навигацию сверху при прокрутке.</li>
+        <li><code>NavClass()</code> подсвечивает активный пункт меню по текущему пути.</li>
+        <li>SVG-спрайт в layout хранит иконки и используется через <code>&lt;use href="#i-..." /&gt;</code>.</li>
+        <li>Bootstrap CSS/JS лежат локально в <code>wwwroot/lib</code> — приложение не зависит от CDN.</li>
+        <li>Подвал содержит ссылки на основные страницы и GitHub-репозиторий.</li>
+    </ul>
+
+    <div class="callout">
+        <span class="label">Единый стиль</span>
+        Тема вынесена в <code>wwwroot/css/site.css</code>: фирменные цвета, тени,
+        hover-эффекты карточек и адаптивные правила. Страницы не дублируют стили.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">19</span></div>
+</section>
+
+<!-- 20. Dockerfile -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Контейнеризация</span><span class="page-tag">20 / 27</span></div>
+    <h1>Dockerfile и запуск контейнера</h1>
+
+    <p>
+        Используется многоступенчатая сборка: на этапе <code>build</code> восстанавливаются
+        зависимости и выполняется <code>dotnet publish</code>, а в финальный образ копируется
+        только опубликованное приложение.
+    </p>
+
+    <div class="figure code-fig">
+        <img src="report/code/11-dockerfile.png" style="width:158mm" alt="Dockerfile" />
+        <div class="figcaption"><b>Рис. 20.</b> <code>Dockerfile</code> — сборка и запуск на .NET 9</div>
+    </div>
+
+    <h3>Команды</h3>
+    <div class="mini-code">docker build -t wt-lab5-5razor-yushkevich .
+docker run --rm -p 8080:8080 -e PORT=8080 wt-lab5-5razor-yushkevich</div>
+
+    <div class="figure">
+        <img src="report/assets/docker-run.jpg" style="width:146mm" alt="Запущенный контейнер" />
+        <div class="figcaption"><b>Рис. 21.</b> Контейнер запущен, приложение слушает порт 8080</div>
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">20</span></div>
+</section>
+
+<!-- 21. Docker build -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Контейнеризация</span><span class="page-tag">21 / 27</span></div>
+    <h1>Сборка Docker-образа</h1>
+
+    <p>
+        Образ собран локально командой <code>docker build</code>. В логе видны все стадии:
+        восстановление пакетов, сборка проекта, публикация и формирование финального слоя.
+    </p>
+
+    <div class="figure">
+        <img src="report/assets/docker-build.jpg" style="width:134mm" alt="Сборка Docker-образа" />
+        <div class="figcaption"><b>Рис. 22.</b> Успешная сборка образа <code>wt-lab5-5razor-yushkevich</code></div>
+    </div>
+
+    <h3>Проверка контейнера</h3>
+    <ul class="checklist">
+        <li>Контейнер запущен с <code>-e PORT=8080</code> и проброшенным портом <code>8080:8080</code>.</li>
+        <li>Приложение читает <code>PORT</code> и слушает <code>http://0.0.0.0:8080</code>.</li>
+        <li>Маршруты <code>/</code>, <code>/Cargo/Index</code>, <code>/Cargo/Create</code> и <code>/Cargo/Details?id=1</code> отвечают <strong>HTTP 200</strong>.</li>
+        <li>Тот же Dockerfile используется Render при автоматической сборке сервиса.</li>
+    </ul>
+
+    <div class="callout">
+        <span class="label">Почему PORT</span>
+        Render передаёт внешний порт через переменную окружения. Приложение не должно
+        жёстко слушать 5000/5001 — иначе платформа не сможет направить трафик в контейнер.
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">21</span></div>
+</section>
+
+<!-- 22. Render deploys -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Публикация</span><span class="page-tag">22 / 27</span></div>
+    <h1>Публикация на Render</h1>
+
+    <p>
+        Сервис создан вручную в Render Dashboard как <strong>Web Service</strong> с Runtime
+        <strong>Docker</strong>. Источник — репозиторий GitHub, ветка <code>main</code>,
+        Dockerfile <code>./Dockerfile</code>. При push в <code>main</code> Render
+        автоматически пересобирает и публикует новую версию.
+    </p>
+
+    <div class="figure">
+        <img src="report/assets/render-deploys.jpg" style="width:101mm" alt="Список деплоев Render" />
+        <div class="figcaption"><b>Рис. 23.</b> История деплоев: три успешные сборки, последняя — <code>9a854a6</code></div>
+    </div>
+
+    <h3>Параметры сервиса</h3>
+    <table class="meta">
+        <tr><td style="width:42mm">Платформа</td><td>Render Web Service</td></tr>
+        <tr><td>Runtime</td><td>Docker</td></tr>
+        <tr><td>Репозиторий</td><td>Balur77 / wt-lab5-5razor-yushkevich</td></tr>
+        <tr><td>Ветка</td><td><code>main</code></td></tr>
+        <tr><td>Dockerfile</td><td><code>./Dockerfile</code></td></tr>
+        <tr><td>Статус</td><td><strong>Live</strong></td></tr>
+        <tr><td>Публичный URL</td><td><a href="https://wt-lab5-5razor-yushkevich.onrender.com">wt-lab5-5razor-yushkevich.onrender.com</a></td></tr>
+    </table>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">22</span></div>
+</section>
+
+<!-- 23. Render detail + public home -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Публикация</span><span class="page-tag">23 / 27</span></div>
+    <h1>Deployment и опубликованное приложение</h1>
+
+    <p>
+        Последний deployment завершился статусом <strong>Deploy succeeded · Live</strong>.
+        Публичная версия открывается по адресу Render и обслуживает те же Razor Pages,
+        что и локальный запуск.
+    </p>
+
+    <div class="figure">
+        <img src="report/assets/render-deploy.jpg" style="width:98mm" alt="Детали деплоя" />
+        <div class="figcaption"><b>Рис. 24.</b> Детали деплоя <code>9a854a6</code>: статус Live, длительность 42,7 с</div>
+    </div>
+
+    <div class="figure">
+        <img src="report/assets/public-home.jpg" style="width:99mm" alt="Опубликованная главная" />
+        <div class="figcaption"><b>Рис. 25.</b> Опубликованная главная страница на Render</div>
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">23</span></div>
+</section>
+
+<!-- 24. Public pages -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Проверка публикации</span><span class="page-tag">24 / 27</span></div>
+    <h1>Проверка опубликованных страниц</h1>
+
+    <div class="callout" style="margin-top:1mm">
+        <span class="label">Публичный URL</span>
+        <a href="https://wt-lab5-5razor-yushkevich.onrender.com">https://wt-lab5-5razor-yushkevich.onrender.com</a>
+    </div>
+
+    <div class="two-up" style="margin-top:2mm">
+        <div class="figure">
+            <img src="report/assets/public-catalog.jpg" alt="Опубликованный каталог" />
+            <div class="figcaption"><b>Рис. 26.</b> Каталог на Render</div>
+        </div>
+        <div class="figure">
+            <img src="report/assets/public-details.jpg" alt="Опубликованные подробности" />
+            <div class="figcaption"><b>Рис. 27.</b> Подробности груза на Render</div>
+        </div>
+    </div>
+
+    <h3>Что проверено на опубликованном сайте</h3>
+    <ul class="checklist">
+        <li>Главная, каталог, форма добавления и подробности отвечают <strong>HTTP 200</strong>.</li>
+        <li>Статические файлы Bootstrap и стили загружаются, интерфейс совпадает с локальным.</li>
+        <li>Клиентская валидация формы показывает сообщения на русском языке.</li>
+        <li>Навигация и ссылки между страницами работают на публичном домене.</li>
+    </ul>
+
+    <h3>Проверка маршрутов</h3>
+    <table class="meta">
+        <tr><th style="width:62mm">Маршрут</th><th style="width:26mm">Ответ</th><th>Результат</th></tr>
+        <tr><td><code>/</code></td><td><strong>200 OK</strong></td><td>Главная страница загружается</td></tr>
+        <tr><td><code>/Cargo/Index</code></td><td><strong>200 OK</strong></td><td>Каталог и карточки грузов</td></tr>
+        <tr><td><code>/Cargo/Create</code></td><td><strong>200 OK</strong></td><td>Форма и клиентская валидация</td></tr>
+        <tr><td><code>/Cargo/Details?id=1</code></td><td><strong>200 OK</strong></td><td>Подробная карточка груза</td></tr>
+    </table>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">24</span></div>
+</section>
+
+<!-- 25. Git -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Версионный контроль</span><span class="page-tag">25 / 27</span></div>
+    <h1>Git-репозиторий и история коммитов</h1>
+
+    <p>
+        Исходный код размещён на GitHub. История показывает последовательную работу:
+        базовое приложение, документация, запуск на Render, исправления валидации.
+        Финальная версия находится в ветке <code>main</code>.
+    </p>
+
+    <div class="figure">
+        <img src="report/assets/github-repo.jpg" style="width:101mm" alt="GitHub-репозиторий" />
+        <div class="figcaption"><b>Рис. 28.</b> Репозиторий <code>Balur77/wt-lab5-5razor-yushkevich</code> на GitHub</div>
+    </div>
+
+    <div class="figure">
+        <img src="report/assets/github-commits.jpg" style="width:110mm" alt="История коммитов" />
+        <div class="figcaption"><b>Рис. 29.</b> История коммитов в ветке <code>main</code></div>
+    </div>
+
+    <div class="callout">
+        <span class="label">Ссылка</span>
+        <a href="https://github.com/Balur77/wt-lab5-5razor-yushkevich">https://github.com/Balur77/wt-lab5-5razor-yushkevich</a>
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">25</span></div>
+</section>
+
+<!-- 26. MVC vs Razor Pages -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Сравнение подходов</span><span class="page-tag">26 / 27</span></div>
+    <h1>MVC и Razor Pages</h1>
+
+    <p>
+        Razor Pages не является отдельным фреймворком: это модель организации приложений
+        ASP.NET Core, которая использует ту же маршрутизацию, middleware, DI, Razor и
+        Tag Helpers. Отличается способ группировки кода страницы.
+    </p>
+
+    <table class="meta">
+        <tr><th style="width:43mm">Аспект</th><th>ASP.NET Core MVC</th><th>Razor Pages</th></tr>
+        <tr><td>Единица организации</td><td>Controller + Action + View</td><td>Страница + PageModel</td></tr>
+        <tr><td>Обработчик запроса</td><td>Метод контроллера</td><td><code>OnGet()</code> / <code>OnPost()</code></td></tr>
+        <tr><td>Расположение</td><td><code>Controllers/</code> + <code>Views/</code></td><td><code>Pages/</code> — рядом</td></tr>
+        <tr><td>Привязка формы</td><td>Параметры action или модель</td><td><code>[BindProperty]</code></td></tr>
+        <tr><td>Редирект</td><td><code>RedirectToAction()</code></td><td><code>RedirectToPage()</code></td></tr>
+        <tr><td>Маршрут</td><td>Атрибуты / шаблоны контроллера</td><td>Путь файла страницы</td></tr>
+        <tr><td>Разметка</td><td>Razor View</td><td>Razor Page</td></tr>
+        <tr><td>Хорошо подходит</td><td>Крупные API и сложные сценарии</td><td>Страничные сценарии, CRUD, формы</td></tr>
+    </table>
+
+    <h3>Вывод по сравнению</h3>
+    <p>
+        Для приложения с преобладанием страничных сценариев Razor Pages оказался компактнее:
+        код страницы и её обработчики находятся в одном месте, не нужно создавать отдельный
+        контроллер и представление, а имена обработчиков напрямую отражают HTTP-метод.
+    </p>
+    <p>
+        MVC остаётся удобнее там, где много общих API-действий, сложная маршрутизация или
+        несколько представлений на один контроллер. В нашем CRUD-приложении Razor Pages
+        дал более простую структуру при сохранении всех возможностей ASP.NET Core:
+        валидации, Tag Helpers, DI и middleware.
+    </p>
+
+    <h3>Когда что выбирать</h3>
+    <table class="meta">
+        <tr><th style="width:52mm">Ситуация</th><th>Рекомендация</th></tr>
+        <tr><td>Страничные CRUD-сценарии и формы</td><td>Razor Pages — код страницы и обработчик рядом</td></tr>
+        <tr><td>Крупный API с множеством endpoint’ов</td><td>MVC-контроллеры или Minimal API</td></tr>
+        <tr><td>Одна страница — несколько представлений</td><td>MVC: контроллер управляет выбором View</td></tr>
+        <tr><td>Быстрый старт небольшого сайта</td><td>Razor Pages: меньше файлов и связующего кода</td></tr>
+    </table>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">26</span></div>
+</section>
+
+<!-- 27. Заключение -->
+<section class="sheet">
+    <div class="page-head"><span class="kicker">Заключение</span><span class="page-tag">27 / 27</span></div>
+    <h1>Заключение</h1>
+
+    <p class="lead">
+        В ходе лабораторной работы приложение учёта грузов было переведено на
+        ASP.NET Core Razor Pages, дополнено полным CRUD-сценарием, адаптивным интерфейсом
+        и опубликовано в Docker-контейнере на Render.
+    </p>
+
+    <h3>Что освоено</h3>
+    <ul class="checklist">
+        <li>Структура Razor Pages: страница <code>.cshtml</code> и класс <code>PageModel</code>.</li>
+        <li>Обработчики <code>OnGet()</code>, <code>OnGet(int id)</code>, <code>OnPost()</code>, <code>OnPost(int id)</code>.</li>
+        <li>Привязка модели через <code>[BindProperty]</code> и проверка <code>ModelState.IsValid</code>.</li>
+        <li>Tag Helpers, partial-представления, единый layout и Bootstrap 5.</li>
+        <li>Серверная и клиентская валидация, локализация сообщений, <code>TempData</code>.</li>
+        <li>Многоступенчатая Docker-сборка и публикация Web Service на Render.</li>
+    </ul>
+
+    <h3>Итог</h3>
+    <p>
+        Приложение работает локально, в Docker-контейнере и на публичном домене Render.
+        Все основные маршруты отвечают HTTP 200, форма добавления проверяет данные на
+        клиенте и на сервере, а изменения сохраняются в общем хранилище в памяти.
+        Репозиторий содержит исходный код, README, Dockerfile и скриншоты.
+    </p>
+
+    <div class="grid-2" style="margin:4mm 0">
+        <div class="stat"><span class="n">27</span><span class="t">страниц в отчёте</span></div>
+        <div class="stat"><span class="n">11</span><span class="t">скриншотов кода</span></div>
+        <div class="stat"><span class="n">6</span><span class="t">страниц приложения с CRUD</span></div>
+        <div class="stat"><span class="n">3</span><span class="t">успешных deployment на Render</span></div>
+    </div>
+
+    <div class="callout">
+        <span class="label">Ссылки</span>
+        Приложение: <a href="https://wt-lab5-5razor-yushkevich.onrender.com">https://wt-lab5-5razor-yushkevich.onrender.com</a><br />
+        Репозиторий: <a href="https://github.com/Balur77/wt-lab5-5razor-yushkevich">https://github.com/Balur77/wt-lab5-5razor-yushkevich</a>
+    </div>
+
+    <div style="margin-top:8mm; padding-top:5mm; border-top:.5pt solid #cbd5e1; font-family:'Segoe UI',Arial,sans-serif; font-size:9.4pt; color:#475569">
+        <div style="margin-bottom:4mm">Отчёт подготовлен по фактически выполненной работе. Работоспособность проверена локально, в Docker и на Render.</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end">
+            <div>Студент: <span style="display:inline-block;width:58mm;border-bottom:.5pt solid #64748b;margin:0 2mm"></span> / Юшкевич Владислав /</div>
+            <div>Дата: 26.10.2026</div>
+        </div>
+    </div>
+
+    <div class="footer"><span><b>CargoFlow</b> · WT-5 Razor Pages</span><span class="pnum">27</span></div>
+</section>
+
+</body>
+</html>

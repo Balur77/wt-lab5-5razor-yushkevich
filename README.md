@@ -14,6 +14,18 @@ https://github.com/Balur77/wt-lab5-5razor-yushkevich
 Сервис опубликован на Render как Web Service (Runtime: Docker, Branch: main).
 Сборка выполняется по `Dockerfile`, приложение слушает порт из переменной окружения `PORT`.
 
+## Отчёт по лабораторной работе
+
+Готовый PDF-отчёт: [`wt-lab5-yushkevich.pdf`](wt-lab5-yushkevich.pdf)
+
+Исходник отчёта и скриншоты кода: [`docs/report.html`](docs/report.html),
+[`docs/report/`](docs/report/).
+
+Отчёт содержит 27 страниц: цель и задачи, описание домена, структуру проекта,
+модель и PageModel, обработчики `OnGet`/`OnPost`, Razor-разметку, скриншоты всех
+страниц приложения, валидацию, Docker, Render, Git и сравнение MVC с Razor Pages.
+
+
 ## Описание предметной области
 
 CargoFlow автоматизирует базовый учёт грузов на складе. Основная сущность — `Cargo`
@@ -196,6 +208,10 @@ Render автоматически передаёт переменную `PORT`, 
 | Удаление | [`docs/screenshots/06-delete.png`](docs/screenshots/06-delete.png) |
 | Результат добавления | [`docs/screenshots/07-create-success.png`](docs/screenshots/07-create-success.png) |
 | Мобильная версия | [`docs/screenshots/09-mobile-catalog.png`](docs/screenshots/09-mobile-catalog.png) |
+| Валидация | [`docs/screenshots/17-validation.png`](docs/screenshots/17-validation.png) |
+| Docker: сборка | [`docs/screenshots/11-docker-build.png`](docs/screenshots/11-docker-build.png) |
+| Render: деплой | [`docs/screenshots/13-render-deploy.png`](docs/screenshots/13-render-deploy.png) |
+| GitHub: коммиты | [`docs/screenshots/19-github-commits.png`](docs/screenshots/19-github-commits.png) |
 
 ## Сравнение MVC и Razor Pages
 
